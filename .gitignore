@@ -14,5 +14,5 @@ modules.xml
 .history
 
 ### binary
-ponto
-ponto.exe
+./ponto
+./ponto.exe
