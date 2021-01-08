@@ -1,0 +1,18 @@
+.idea/
+
+*.iml
+modules.xml
+.idea/misc.xml
+*.ipr
+
+### VisualStudioCode ###
+.vscode/*
+*.code-workspace
+
+### VisualStudioCode Patch ###
+# Ignore all local history of files
+.history
+
+### binary
+ponto
+ponto.exe
