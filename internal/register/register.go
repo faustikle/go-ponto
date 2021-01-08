@@ -8,20 +8,27 @@ import (
 	"github.com/faustikle/go-ponto/internal/pontotel"
 )
 
-func Register(c *pontotel.Client, kind, lat, lon string) (string, error) {
+func Register(c *pontotel.Client, kind, lat, lon string) (ponto.Entity, error) {
 	if kind != "" && !ponto.ValidKind(kind) {
-		return "", fmt.Errorf("Tipo inválido, os tipos aceitos são: entrada, pausa, retorno e saida.")
+		return ponto.Entity{}, fmt.Errorf("Tipo inválido, os tipos aceitos são: entrada, pausa, retorno e saida.")
 	}
 
 	times, err := list.List(c)
 	if err != nil {
-		return "", err
+		return ponto.Entity{}, err
 	}
 
 	res, err := c.Register(times, ponto.NewKind(kind), lat, lon)
 	if err != nil {
-		return "", err
+		return ponto.Entity{}, err
 	}
 
-	return res.Success, nil
+	newTimes, err := list.List(c)
+	if err != nil {
+		return ponto.Entity{}, err
+	}
+
+	fmt.Println(res.Success)
+
+	return newTimes, nil
 }

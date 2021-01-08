@@ -5,12 +5,20 @@ import (
 	"time"
 )
 
+type BestTimes struct {
+	Entrada time.Time
+	Pausa   time.Time
+	Retorno time.Time
+	Saida   time.Time
+}
+
 type Entity struct {
-	Entrada  []time.Time
-	Pausa    []time.Time
-	Retorno  []time.Time
-	Saida    []time.Time
-	Employee string
+	Entrada   []time.Time
+	Pausa     []time.Time
+	Retorno   []time.Time
+	Saida     []time.Time
+	Employee  string
+	BestTimes BestTimes
 }
 
 func NewEntity(employee string, entrada, pausa, retorno, saida []string) Entity {
@@ -47,13 +55,17 @@ func NewEntity(employee string, entrada, pausa, retorno, saida []string) Entity 
 		}
 	}
 
-	return Entity{
+	entity := Entity{
 		Entrada:  e,
 		Pausa:    p,
 		Retorno:  r,
 		Saida:    s,
 		Employee: employee,
 	}
+
+	entity.BestTimes = newBestTimes(entity)
+
+	return entity
 }
 
 func (e Entity) NextKind() string {
@@ -76,6 +88,31 @@ func (e Entity) NextKind() string {
 	fmt.Println(e)
 
 	return ""
+}
+
+// TODO: Implement multiple times calculations.
+func newBestTimes(e Entity) BestTimes {
+	if len(e.Entrada) > 1 || len(e.Pausa) > 1 || len(e.Retorno) > 1 || len(e.Saida) > 1 {
+		return BestTimes{}
+	}
+
+	startTime, _ := time.Parse(time.RFC3339Nano, "2006-01-02T09:00:00.999999999Z07:00")
+	pauseTime, _ := time.Parse(time.RFC3339Nano, "2006-01-02T12:00:00.999999999Z07:00")
+	bestRetorno := e.Pausa[0].Add(time.Hour)
+	lauchTime := bestRetorno.Sub(e.Pausa[0])
+
+	if e.Retorno != nil && e.Retorno[0] != (time.Time{}) {
+		lauchTime = e.Retorno[0].Sub(e.Pausa[0])
+	}
+
+	saida := e.Entrada[0].Add((time.Hour*8) + lauchTime)
+
+	return BestTimes{
+		Entrada: startTime,
+		Pausa:   pauseTime,
+		Retorno: bestRetorno,
+		Saida:   saida,
+	}
 }
 
 func parseTime(v string) (time.Time, error) {

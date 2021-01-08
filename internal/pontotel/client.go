@@ -43,7 +43,6 @@ func NewClient(cfg ClientConfig) *Client {
 }
 
 func (c *Client) Login() (LoginResponse, error) {
-	fmt.Println("Fazendo login no Pontotel...")
 	loginReq := LoginRequest{
 		CompMan:     c.CompMan,
 		Fingerprint: c.FingerPrint,
@@ -84,8 +83,6 @@ func (c *Client) Login() (LoginResponse, error) {
 	}
 
 	c.sessionToken = loginResponse.Success.SessionToken
-
-	fmt.Println("Sucesso no login.")
 
 	return loginResponse, nil
 }

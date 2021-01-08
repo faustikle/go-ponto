@@ -1,10 +1,9 @@
 package app
 
 import (
-	"fmt"
-
 	"github.com/faustikle/go-ponto/internal/errorhandler"
 	"github.com/faustikle/go-ponto/internal/fileconfig"
+	"github.com/faustikle/go-ponto/internal/list"
 	"github.com/faustikle/go-ponto/internal/pontotel"
 	"github.com/faustikle/go-ponto/internal/register"
 	"github.com/spf13/cobra"
@@ -29,13 +28,13 @@ func Register() *cobra.Command {
 				Password:    cfg.Password,
 			})
 
-			msg, err := register.Register(client, kind, cfg.Lat, cfg.Lon)
+			newTimes, err := register.Register(client, kind, cfg.Lat, cfg.Lon)
 			if err != nil {
 				errorhandler.Handler(err)
 				return
 			}
 
-			fmt.Println("\n" + msg)
+			list.Print(newTimes)
 		},
 	}
 
