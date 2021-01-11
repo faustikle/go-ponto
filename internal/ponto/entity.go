@@ -92,13 +92,32 @@ func (e Entity) NextKind() string {
 
 // TODO: Implement multiple times calculations.
 func newBestTimes(e Entity) BestTimes {
+	startTime, _ := time.Parse(time.RFC3339Nano, "2006-01-02T09:00:00.999999999Z")
+	pauseTime, _ := time.Parse(time.RFC3339Nano, "2006-01-02T12:00:00.999999999Z")
+
 	if len(e.Entrada) > 1 || len(e.Pausa) > 1 || len(e.Retorno) > 1 || len(e.Saida) > 1 {
 		return BestTimes{}
 	}
 
-	startTime, _ := time.Parse(time.RFC3339Nano, "2006-01-02T09:00:00.999999999Z07:00")
-	pauseTime, _ := time.Parse(time.RFC3339Nano, "2006-01-02T12:00:00.999999999Z07:00")
-	bestRetorno := e.Pausa[0].Add(time.Hour)
+	if len(e.Entrada) == 0 {
+		return BestTimes{
+			Entrada:   startTime,
+		}
+	}
+
+	if len(e.Pausa) == 0 {
+		return BestTimes{
+			Pausa:   pauseTime,
+		}
+	}
+
+	var bestRetorno time.Time
+	if len(e.Pausa) > 0 {
+		bestRetorno = e.Pausa[0].Add(time.Hour)
+	} else {
+		bestRetorno = time.Time{}
+	}
+
 	lauchTime := bestRetorno.Sub(e.Pausa[0])
 
 	if e.Retorno != nil && e.Retorno[0] != (time.Time{}) {
